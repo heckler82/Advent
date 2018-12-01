@@ -96,7 +96,7 @@ public class ChronicleCalibration {
         boolean duplicateFound = false;
         int i = 0;
         while(!duplicateFound) {
-            // Calculate adjusted frequency and add to freq pool
+            // Calculate adjusted frequency
             freq += adjustments[i];
             // Attempt to add freq, stop search if already in pool
             if(uniqueFreqs.add(freq)) {
