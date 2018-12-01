@@ -98,9 +98,8 @@ public class ChronicleCalibration {
         while(!duplicateFound) {
             // Calculate adjusted frequency and add to freq pool
             freq += adjustments[i];
-            // If freq doesn't exist, add it, otherwise end search
-            if(!uniqueFreqs.contains(freq)) {
-                uniqueFreqs.add(freq);
+            // Attempt to add freq, stop search if already in pool
+            if(uniqueFreqs.add(freq)) {
                 // Clamp i between 0 and args.length - 1
                 i = ++i % adjustments.length;
             }
