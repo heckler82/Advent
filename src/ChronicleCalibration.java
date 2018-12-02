@@ -12,7 +12,7 @@ import java.util.Set;
  * @version 01 Dec 2018
  */
 public class ChronicleCalibration {
-    private int[] input;
+    private String fileName;
 
     /**
      * Creates and prepares the input
@@ -20,16 +20,7 @@ public class ChronicleCalibration {
      * @param fileName The name of the file with the sample input
      */
     public ChronicleCalibration(String fileName) {
-        File file = new File(fileName);
-        try {
-            Scanner scan = new Scanner(file);
-            input = processInput(scan);
-        } catch(FileNotFoundException e) {
-            System.err.println("[CRITICAL] The requested file cannot be found");
-            System.err.println("[INFORMATION] The program will now terminate");
-            System.exit(1);
-        }
-
+        this.fileName = fileName;
     }
 
     /**
@@ -58,6 +49,19 @@ public class ChronicleCalibration {
      * Runs the calculations
      */
     public void run() {
+        File file = new File(fileName);
+        int[] input = null;
+        Scanner scan = null;
+        try {
+            scan = new Scanner(file);
+        } catch(FileNotFoundException e) {
+            System.err.println("[CRITICAL] The requested file cannot be found");
+            System.err.println("[INFORMATION] The program will now terminate");
+            System.exit(1);
+        }
+        input = processInput(scan);
+
+        // Print result of calculations
         System.out.println("Starting frequency is 0");
         System.out.printf("Final adjusted frequency is %d%n", findFinalAdjustedFrequency(input));
         System.out.printf("First duplicate frequency is %d%n", findFirstDuplicateFrequency(input));
