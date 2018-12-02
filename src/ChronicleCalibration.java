@@ -1,8 +1,4 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.Set;
 
 /**
@@ -11,60 +7,40 @@ import java.util.Set;
  * @author Evan Foley
  * @version 01 Dec 2018
  */
-public class ChronicleCalibration {
-    private String fileName;
-
+public class ChronicleCalibration extends AdventMaster{
     /**
-     * Creates and prepares the input
+     * Creates a new instance
      *
-     * @param fileName The name of the file with the sample input
+     * @param fileName The name of the input file
      */
     public ChronicleCalibration(String fileName) {
-        this.fileName = fileName;
-    }
-
-    /**
-     * Prepares the input for use
-     *
-     * @param scan The parsing object
-     * @return The input from the parser
-     */
-    private int[] processInput(Scanner scan) {
-        ArrayList<String> container = new ArrayList<>();
-        while(scan.hasNextLine()) {
-            container.add(scan.nextLine());
-        }
-        int[] rawIn = new int[container.size()];
-        for(int i = 0; i < rawIn.length; i++) {
-            try {
-                rawIn[i] = Integer.parseInt(container.get(i));
-            } catch(NumberFormatException e) {
-                System.err.print("[WARNING] Could not parse the given String to an Integer");
-            }
-        }
-        return rawIn;
+        super(fileName);
     }
 
     /**
      * Runs the calculations
      */
     public void run() {
-        File file = new File(fileName);
-        int[] input = null;
-        Scanner scan = null;
-        try {
-            scan = new Scanner(file);
-        } catch(FileNotFoundException e) {
-            System.err.println("[CRITICAL] The requested file cannot be found");
-            System.err.println("[INFORMATION] The program will now terminate");
-            System.exit(1);
-        }
-        input = processInput(scan);
+        super.run();
+
+        int[] freqs = parseInput(input);
 
         // Print result of calculations
         System.out.println("Starting frequency is 0");
-        System.out.printf("Final adjusted frequency is %d%n", findFinalAdjustedFrequency(input));
-        System.out.printf("First duplicate frequency is %d%n", findFirstDuplicateFrequency(input));
+        System.out.printf("Final adjusted frequency is %d%n", findFinalAdjustedFrequency(freqs));
+        System.out.printf("First duplicate frequency is %d%n", findFirstDuplicateFrequency(freqs));
+    }
+
+    private int[] parseInput(String[] input) {
+        int[] rawIn = new int[input.length];
+        for(int i = 0; i < input.length; i++) {
+            try {
+                rawIn[i] = Integer.parseInt(input[i]);
+            } catch(NumberFormatException e) {
+                System.err.print("[WARNING] Could not parse the given String to an Integer");
+            }
+        }
+        return rawIn;
     }
 
     /**
