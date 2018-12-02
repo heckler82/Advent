@@ -31,6 +31,12 @@ public class ChronicleCalibration extends AdventMaster{
         System.out.printf("First duplicate frequency is %d%n", findFirstDuplicateFrequency(freqs));
     }
 
+    /**
+     * Converts raw input into numerical data for calculation
+     *
+     * @param input The raw input
+     * @return Numerical form of the raw input
+     */
     private int[] parseInput(String[] input) {
         int[] rawIn = new int[input.length];
         for(int i = 0; i < input.length; i++) {
