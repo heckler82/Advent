@@ -21,6 +21,7 @@ public class ChronicleCalibration extends AdventMaster{
      * Runs the calculations
      */
     public void run() {
+        // Get numerical data for calculation
         int[] freqs = parseInput(input);
 
         // Print result of calculations
