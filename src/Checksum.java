@@ -1,9 +1,5 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Scanner;
 
 /**
  * Solution for Day02 of Advent of Code
