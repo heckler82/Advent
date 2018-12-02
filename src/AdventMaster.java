@@ -20,6 +20,7 @@ public abstract class AdventMaster {
      */
     public AdventMaster(String fileName) {
         this.fileName = fileName;
+        setup();
     }
 
     /**
@@ -36,7 +37,10 @@ public abstract class AdventMaster {
         return arr.toArray(new String[arr.size()]);
     }
 
-    protected void run() {
+    /**
+     * Sets up the data
+     */
+    protected void setup() {
         File file = new File(fileName);
         Scanner scan = null;
         try {

@@ -21,8 +21,6 @@ public class Checksum extends AdventMaster{
      * Runs the calculations
      */
     public void run() {
-        super.run();
-
         System.out.printf("The checksum for the box IDs is %d%n", computeChecksum(input));
         System.out.printf("The common characters between the matching boxes are: %s", commonBoxID(input, 1));
 
