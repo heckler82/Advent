@@ -17,8 +17,9 @@ public class ChronicleCalibration extends AdventMaster{
         super(fileName);
     }
 
+    @Override
     /**
-     * Runs the calculations
+     * Runs the program
      */
     public void run() {
         // Get numerical data for calculation

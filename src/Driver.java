@@ -11,5 +11,14 @@ public class Driver {
 
         System.out.println("\nDay02");
         new Checksum("./Sample Input/Day02.txt").run();
+
+        System.out.println("\nDay03");
+        new Intersection("./Sample Input/Day03.txt").run();
+
+        System.out.println("\nDay04");
+        new SleepyGuard("./Sample Input/Day04.txt").run();
+
+        System.out.println("\nDay05");
+        new Polymerization("./Sample Input/Day05.txt").run();
     }
 }

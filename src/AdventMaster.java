@@ -10,7 +10,6 @@ import java.util.Scanner;
  * @version 02 Dec 2018
  */
 public abstract class AdventMaster {
-    protected String fileName;
     protected String[] input;
 
     /**
@@ -19,8 +18,7 @@ public abstract class AdventMaster {
      * @param fileName The name of the input file
      */
     public AdventMaster(String fileName) {
-        this.fileName = fileName;
-        setup();
+        setup(fileName);
     }
 
     /**
@@ -39,8 +37,10 @@ public abstract class AdventMaster {
 
     /**
      * Sets up the data
+     *
+     * @param fileName The name of the input file
      */
-    protected void setup() {
+    protected void setup(String fileName) {
         File file = new File(fileName);
         Scanner scan = null;
         try {
@@ -52,4 +52,9 @@ public abstract class AdventMaster {
         }
         input = processInputFile(scan);
     }
+
+    /**
+     * Runs the program
+     */
+    public abstract void run();
 }
