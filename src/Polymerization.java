@@ -9,6 +9,10 @@ public class Polymerization extends AdventMaster {
         super(fileName);
     }
 
+    @Override
+    /**
+     * Runs the program
+     */
     public void run() {
         System.out.printf("The number of remaining units after fully reacting the polymer is %d%n", reactPolymer(input[0]));
         System.out.printf("The minimum length polymer that can be created is %d units long", fullyReactPolymer(input[0]));

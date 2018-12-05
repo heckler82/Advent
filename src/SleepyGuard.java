@@ -16,6 +16,7 @@ public class SleepyGuard extends AdventMaster {
         super(fileName);
     }
 
+    @Override
     /**
      * Runs the program
      */
