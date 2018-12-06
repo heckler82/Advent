@@ -8,6 +8,11 @@ import java.util.regex.Pattern;
  * @version 03 Dec 2018
  */
 public class Intersection extends AdventMaster {
+    /**
+     * Creates a new instance
+     *
+     * @param fileName The name of the input file
+     */
     public Intersection(String fileName) {
         super(fileName);
     }

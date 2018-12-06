@@ -79,9 +79,8 @@ public class ChronicleCalibration extends AdventMaster{
         uniqueFreqs.add(freq);
 
         // Loop all provided adjustments until duplicate hit found
-        boolean duplicateFound = false;
         int i = 0;
-        while(!duplicateFound) {
+        while(true) {
             // Calculate adjusted frequency
             freq += adjustments[i];
             // Attempt to add freq, stop search if already in pool
@@ -90,7 +89,7 @@ public class ChronicleCalibration extends AdventMaster{
                 i = ++i % adjustments.length;
             }
             else {
-                duplicateFound = true;
+                break;
             }
         }
         return freq;

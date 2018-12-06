@@ -12,6 +12,11 @@ import java.util.regex.Pattern;
  * @version 05 Dec 2018
  */
 public class SleepyGuard extends AdventMaster {
+    /**
+     * Creates a new instance
+     *
+     * @param fileName The name of the input file
+     */
     public SleepyGuard(String fileName) {
         super(fileName);
     }
