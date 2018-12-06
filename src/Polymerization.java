@@ -15,7 +15,7 @@ public class Polymerization extends AdventMaster {
      */
     public void run() {
         System.out.printf("The number of remaining units after fully reacting the polymer is %d%n", reactPolymer(input[0]));
-        System.out.printf("The minimum length polymer that can be created is %d units long", fullyReactPolymer(input[0]));
+        System.out.printf("The minimum length polymer that can be created is %d units long%n", fullyReactPolymer(input[0]));
     }
 
     /**
@@ -25,24 +25,24 @@ public class Polymerization extends AdventMaster {
      * @return The final reduced String
      */
     private int reactPolymer(String input) {
-        StringBuilder finalPolymer = new StringBuilder();
-        finalPolymer.append(input);
-        int numDestroyed;
+        StringBuilder finalPolymer = new StringBuilder(input);
         // Cycle until no pairs to destroy are found
+        boolean isChanged;
         do {
-            numDestroyed = 0;
+            isChanged = false;
             for (int i = finalPolymer.length() - 1; i > 0; i--) {
                 char firstUnit = finalPolymer.charAt(i);
                 char secondUnit = finalPolymer.charAt(i - 1);
                 // Do characters "react" with each other
                 if((secondUnit ^ firstUnit) == 32) {
+                    // Remove reacted pair
                     finalPolymer.delete(i - 1, i + 1);
-                    numDestroyed += 2;
+                    isChanged = true;
                     // decrement i by 1 to ensure it stays on the correct character
                     i--;
                 }
             }
-        } while(numDestroyed > 0);
+        } while(isChanged);
         return finalPolymer.toString().length();
     }
 
