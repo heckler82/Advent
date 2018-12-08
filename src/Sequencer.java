@@ -21,7 +21,7 @@ public class Sequencer extends AdventMaster {
      */
     public void run() {
         System.out.printf("The sequence of steps is %s%n", getProperSequence());
-        System.out.printf("The time taken to complete the sequence is %d%n", getTimedSequence());
+        System.out.printf("The time taken to complete the sequence is %d seconds%n", getTimedSequence());
     }
 
     /**
