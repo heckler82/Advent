@@ -40,5 +40,19 @@ public class Driver {
         new Polymerization("./Sample Input/Day05.txt").run();
         elapsedTime = (System.nanoTime() - currentTime) / 1000000;
         System.out.printf("Time Taken: %dms%n", elapsedTime);
+
+        // Day 06
+        currentTime = System.nanoTime();
+        System.out.println("\nDay05");
+        new Plot("./Sample Input/Day06.txt").run();
+        elapsedTime = (System.nanoTime() - currentTime) / 1000000;
+        System.out.printf("Time Taken: %dms%n", elapsedTime);
+
+        // Day 07
+        currentTime = System.nanoTime();
+        System.out.println("\nDay07");
+        new Sequencer("./Sample Input/Day07.txt").run();
+        elapsedTime = (System.nanoTime() - currentTime) / 1000000;
+        System.out.printf("Time Taken: %dms%n", elapsedTime);
     }
 }
