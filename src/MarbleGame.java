@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,15 +23,7 @@ public class MarbleGame extends AdventMaster {
      */
     public void run() {
         // Convert String data to integer data
-        int[] data = new int[2];
-        Pattern pattern = Pattern.compile("[\\d]+");
-        Matcher matcher = pattern.matcher(input[0]);
-        int index = 0;
-        // Pull out the numerical pieces
-        while(matcher.find()) {
-            data[index] = Integer.parseInt(matcher.group());
-            index++;
-        }
+        int[] data = getNumericalData(input);
 
         // Keep track of elf scores
         long[] scores = new long[data[0]];
@@ -42,23 +31,14 @@ public class MarbleGame extends AdventMaster {
         // Game control data
         int stoppingMarble = data[1];
 
-
         // Marble list
-        List<Integer> list = new LinkedList<>();
-        Node root = new Node(0);
-        root.next = root;
-        root.prev = root;
-        list.add(0);
+        Node root = getNewList(0);
 
         // Get the results of the game
         System.out.printf("The highest score is %d%n", winningScore(root, scores, stoppingMarble));
 
         // Reset game
-        list.clear();
-        list.add(0);
-        root = new Node(0);
-        root.next = root;
-        root.prev = root;
+        root = getNewList(0);
         scores = new long[data[0]];
         System.out.printf("The highest score when the last marble is 100 times larger is %d%n", winningScore(root, scores, stoppingMarble * 100));
     }
@@ -85,6 +65,7 @@ public class MarbleGame extends AdventMaster {
             if(currentPlayingMarble % 23 == 0) {
                 // Determine the marble to remove
                 Node remove = current.prev.prev.prev.prev.prev.prev.prev;
+                // Remove the marble and update next
                 remove.prev.next = remove.next;
                 remove.next.prev = remove.prev;
                 current = remove.next;
@@ -98,13 +79,15 @@ public class MarbleGame extends AdventMaster {
                 }
             }
             else {
-                // Calculate the placement index
+                // Create the newest node and get the node to add after
                 Node newNode = new Node(currentPlayingMarble);
                 Node next = current.next;
+                // Add the new node to the list, and update references
                 newNode.next = next.next;
                 next.next.prev = newNode;
                 newNode.prev = next;
                 next.next = newNode;
+                // Update current
                 current = newNode;
             }
             // Determine exit conditions
@@ -117,6 +100,40 @@ public class MarbleGame extends AdventMaster {
             }
         }
         return currentHighScore;
+    }
+
+    /**
+     * Gets a new list
+     *
+     * @param startingValue The value initially in the list
+     * @return The new list
+     */
+    private Node getNewList(int startingValue) {
+        Node n = new Node(startingValue);
+        n.next = n;
+        n.prev = n;
+        return n;
+    }
+
+    /**
+     * Gets the input in numerical form
+     *
+     * @param input The input
+     * @return The input in numerical form
+     */
+    private int[] getNumericalData(String[] input) {
+        // Create container
+        int[] data = new int[2];
+        // Prepare pattern to match
+        Pattern pattern = Pattern.compile("[\\d]+");
+        Matcher matcher = pattern.matcher(input[0]);
+        int index = 0;
+        // Pull out the numerical pieces
+        while(matcher.find()) {
+            data[index] = Integer.parseInt(matcher.group());
+            index++;
+        }
+        return data;
     }
 
     /**
