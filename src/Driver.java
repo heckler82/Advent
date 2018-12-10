@@ -50,5 +50,17 @@ public class Driver {
         new Sequencer("./Sample Input/Day07.txt").run();
         timer.tick();
         timer.printTick();
+
+        // Day 08
+        System.out.println("\nDay08");
+        new Nodes("./Sample Input/Day08.txt").run();
+        timer.tick();
+        timer.printTick();
+
+        // Day 09
+        System.out.println("\nDay09");
+        new MarbleGame("./Sample Input/Day09.txt").run();
+        timer.tick();
+        timer.printTick();
     }
 }
