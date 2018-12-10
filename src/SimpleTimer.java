@@ -13,7 +13,7 @@ public class SimpleTimer {
      * Helper enum
      */
     public enum Units {
-        SECONDS(1000000000), MILLISECONDS(1000000);
+        SECONDS(1000000000), MILLISECONDS(1000000), MICROSECONDS(1000), NANOSECONDS(1);
 
         private int units;
 
