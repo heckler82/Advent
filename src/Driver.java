@@ -63,6 +63,18 @@ public class Driver {
         timer.tick();
         timer.printTick(SimpleTimer.Units.MILLISECONDS);
 
+        // Day 10
+        System.out.println("\nDay10");
+        new HiddenMessage("./Sample Input/Day10.txt").run();
+        timer.tick();
+        timer.printTick(SimpleTimer.Units.MILLISECONDS);
+
+        // Day 11
+        System.out.println("\nDay11");
+        new FuelCell("./Sample Input/Day11.txt").run();
+        timer.tick();
+        timer.printTick(SimpleTimer.Units.MILLISECONDS);
+
         System.out.println();
         timer.printTotalTime(SimpleTimer.Units.MILLISECONDS);
     }
