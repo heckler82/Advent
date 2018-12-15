@@ -17,9 +17,9 @@ public class Sequencer extends AdventMaster {
 
     @Override
     /**
-     * Runs the program
+     * Accomplishes the task for this day
      */
-    public void run() {
+    public void task() {
         System.out.printf("The sequence of steps is %s%n", getProperSequence());
         System.out.printf("The time taken to complete the sequence is %d seconds%n", getTimedSequence());
     }

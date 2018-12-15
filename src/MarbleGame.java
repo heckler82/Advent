@@ -19,9 +19,9 @@ public class MarbleGame extends AdventMaster {
 
     @Override
     /**
-     * Runs the program
+     * Accomplishes the task for this day
      */
-    public void run() {
+    public void task() {
         // Convert String data to integer data
         int[] data = getNumericalData(input);
 

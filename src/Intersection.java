@@ -19,9 +19,9 @@ public class Intersection extends AdventMaster {
 
     @Override
     /**
-     * Runs the program
+     * Accomplishes the task for this day
      */
-    public void run() {
+    public void task() {
         // Fabric visualization
         int[][] fabric = new int[1000][1000];
         // Parse the claims from the input into the map

@@ -19,9 +19,9 @@ public class Checksum extends AdventMaster{
 
     @Override
     /**
-     * Runs the program
+     * Accomplishes the task for this day
      */
-    public void run() {
+    public void task() {
         System.out.printf("The checksum for the box IDs is %d%n", computeChecksum(input));
         System.out.printf("The common characters between the matching boxes are: %s%n", commonBoxID(input));
 

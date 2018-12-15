@@ -25,9 +25,9 @@ public class Plot extends AdventMaster {
 
     @Override
     /**
-     * Runs the program
+     * Accomplishes the task for this day
      */
-    public void run() {
+    public void task() {
         Point[] points = getPoints();
         System.out.printf("The largest non-infinite area is %d%n", findLargestArea(points));
         System.out.printf("The largest area with limited Manhattan Distance is %d%n", findLargestRegionLimit(points, 10000));

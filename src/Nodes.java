@@ -18,9 +18,9 @@ public class Nodes extends AdventMaster {
 
     @Override
     /**
-     * Runs the program
+     * Accomplishes the task for this day
      */
-    public void run() {
+    public void task() {
         System.out.printf("The total sum of the meta data is %d%n", getTotalMetaData());
         System.out.printf("The value of the root node is %d%n", getRootNodeValue(root));
     }

@@ -55,6 +55,18 @@ public abstract class AdventMaster {
 
     /**
      * Runs the program
+     *
+     * @param timer The timer
      */
-    public abstract void run();
+    public void run(SimpleTimer timer) {
+        timer.setToCurrentTime();
+        task();
+        timer.tick();
+        timer.printTick();
+    }
+
+    /**
+     * Accomplishes the task for this day
+     */
+    protected abstract void task();
 }

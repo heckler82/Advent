@@ -23,9 +23,9 @@ public class SleepyGuard extends AdventMaster {
 
     @Override
     /**
-     * Runs the program
+     * Accomplishes the task for this day
      */
-    public void run() {
+    public void task() {
         List<Tuple<Date, String>> events = sortEvents(input);
         Map<Integer, int[]> processedData = processData(events);
 
@@ -56,7 +56,7 @@ public class SleepyGuard extends AdventMaster {
             }
             else {
                 // This is not a guard shift change
-                if("falls asleep".equals((String)event.item2)) {
+                if("falls asleep".equals(event.item2)) {
                     // Get the minute they fall asleep
                     Date sleep = (Date)event.item1;
                     Calendar cal = Calendar.getInstance();
@@ -65,7 +65,7 @@ public class SleepyGuard extends AdventMaster {
                 }
                 else {
                     // Not a shift change or a sleep event
-                    if("wakes up".equals((String)event.item2)) {
+                    if("wakes up".equals(event.item2)) {
                         // Get the waking minute
                         Date wake = (Date)event.item1;
                         Calendar cal = Calendar.getInstance();

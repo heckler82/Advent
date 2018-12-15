@@ -22,9 +22,9 @@ public class HiddenMessage extends AdventMaster {
 
     @Override
     /**
-     * Runs the program
+     * Accomplishes the task for this day
      */
-    public void run() {
+    public void task() {
         // Get the points from the input
         List<Point> points = getPoints(input);
         // Find the message

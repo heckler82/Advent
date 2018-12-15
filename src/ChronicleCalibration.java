@@ -19,9 +19,9 @@ public class ChronicleCalibration extends AdventMaster{
 
     @Override
     /**
-     * Runs the program
+     * Accomplishes the task for this day
      */
-    public void run() {
+    public void task() {
         // Get numerical data for calculation
         int[] freqs = parseInput(input);
 
@@ -89,9 +89,8 @@ public class ChronicleCalibration extends AdventMaster{
                 i = ++i % adjustments.length;
             }
             else {
-                break;
+                return freq;
             }
         }
-        return freq;
     }
 }
