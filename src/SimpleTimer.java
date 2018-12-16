@@ -59,7 +59,7 @@ public class SimpleTimer {
             double time = (double) elapsedTime / unit.divisor;
             if(time >= 1.0) {
                 DecimalFormat df = new DecimalFormat("#0");
-                System.out.printf("Time taken: %s%s%n", df.format(time), unit.units);
+                System.out.printf("Elapsed Time: %s%s%n", df.format(time), unit.units);
                 return;
             }
         }
