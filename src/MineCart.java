@@ -9,10 +9,19 @@ import java.util.List;
  * @version 15 Dec 2018
  */
 public class MineCart extends AdventMaster {
+    /**
+     * Creates a new instance
+     *
+     * @param fileName The name of the input file
+     */
     public MineCart(String fileName) {
         super(fileName);
     }
 
+    @Override
+    /**
+     * Accomplishes the task for this day
+     */
     public void task() {
         char[][] track = parseTrack(input);
         List<Cart> carts = parseCarts(track);
