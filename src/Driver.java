@@ -61,6 +61,10 @@ public class Driver {
         System.out.println("\nDay13");
         new MineCart("./Sample Input/Day13.txt").run(timer);
 
+        // Day 14
+        System.out.println("\nDay14");
+        new ChocolateCharts("./Sample Input/Day14.txt").run(timer);
+
         System.out.println();
         timer.printTotalTime(SimpleTimer.Units.SECONDS);
     }

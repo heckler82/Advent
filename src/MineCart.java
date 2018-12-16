@@ -3,7 +3,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Solution for Day13.txt of Advent of Code
+ * Solution for Day13 of Advent of Code
  *
  * @author Evan Foley
  * @version 15 Dec 2018
