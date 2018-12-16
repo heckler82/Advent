@@ -23,15 +23,14 @@ public class MineCart extends AdventMaster {
             for(int i = carts.size() - 1; i >= 0; i--) {
                 Cart cart = carts.get(i);
                 cart.move(track);
-                int numCollide = checkCollisions(carts, i);
-                if(numCollide > -1) {
-                    carts.remove(Math.max(i, numCollide));
-                    carts.remove(Math.min(i, numCollide));
-                    // If removal
-                    if(i > carts.size()) {
-                        i = carts.size();
+                int collisionIndex = checkCollisions(carts, i);
+                if(collisionIndex > -1) {
+                    carts.remove(Math.max(i, collisionIndex));
+                    carts.remove(Math.min(i, collisionIndex));
+                    if(collisionIndex < i) {
+                        i--;
                     }
-                    System.out.printf("The location of the collision is (%d, %d) at tick %d current cart is %d and collided with %d%n", cart.x, cart.y, currentTick, i, numCollide);
+                    System.out.printf("The location of the collision is (%d, %d) at tick %d%n", cart.x, cart.y, currentTick);
                 }
             }
         }
