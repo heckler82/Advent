@@ -67,7 +67,11 @@ public class Driver {
 
         // Day 15
         System.out.println("\nDay15");
-        new CaveBattle("./Sample Input/Day15.txt").run(timer);
+        //new CaveBattle("./Sample Input/Day15.txt").run(timer);
+
+        // Day 16
+        System.out.println("\nDay16");
+        new Opcode("./Sample Input/Day16.txt").run(timer);
 
         System.out.println();
         timer.printTotalTime(SimpleTimer.Units.SECONDS);
