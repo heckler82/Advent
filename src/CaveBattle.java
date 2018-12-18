@@ -101,8 +101,6 @@ public class CaveBattle extends AdventMaster {
             if(roundCompleted) {
                 round++;
             }
-            System.out.println("Round " + round);
-            printMap(map);
         }
         // Get the total hit points from the remaining objects
         System.out.println("Final round: " + round);
