@@ -12,6 +12,7 @@ public class CaveBattle extends AdventMaster {
     private List<GameObject> objects;
     private int elfCount = 0;
     private int goblinCount = 0;
+    private int elfDamage = 23;
 
     /**
      * Creates a new instance
@@ -35,6 +36,7 @@ public class CaveBattle extends AdventMaster {
     private int battle(int[][] map) {
         // Initial round
         int round = 0;
+        // Print out the initial state
         System.out.println("Initial State");
         for(int g = 0; g < map.length; g++) {
             for(int h = 0; h < map[g].length; h++) {
@@ -51,6 +53,10 @@ public class CaveBattle extends AdventMaster {
             System.out.println();
         }
         System.out.println();
+        // Get the initial goblin and elf counts
+        int initialGoblins = goblinCount;
+        int initialElves = elfCount;
+        // Continue to wage war as long as both races still have soldiers to fight
         while(elfCount > 0 && goblinCount >0) {
             boolean roundCompleted = true;
             // Sort objects
@@ -97,7 +103,7 @@ public class CaveBattle extends AdventMaster {
                                             }
                                         }
                                         // Attack here; if target dies, decrement count for its team
-                                        if (!target.damage(3)) {
+                                        if (!target.damage(obj.damage)) {
                                             map[target.y][target.x] = 1;
                                             if (target.team == 1) {
                                                 goblinCount--;
@@ -120,7 +126,7 @@ public class CaveBattle extends AdventMaster {
                             }
                         }
                         // Attack here; if target dies, decrement count for its team
-                        if(!target.damage(3)) {
+                        if(!target.damage(obj.damage)) {
                             map[target.y][target.x] = 1;
                             if(target.team == 1) {
                                 goblinCount--;
@@ -179,6 +185,9 @@ public class CaveBattle extends AdventMaster {
                 answer += object.health;
             }
         }
+        // Print out the battle stats
+        System.out.printf("The elves have %d / %d soldiers remaining%n", elfCount, initialElves);
+        System.out.printf("The goblins have %d / %d soldiers remaining%n", goblinCount, initialGoblins);
         // Get the completed rounds multiplied by the total remaining health
         return answer * round;
     }
@@ -285,20 +294,14 @@ public class CaveBattle extends AdventMaster {
                     case 'G':
                         // Open space, but a goblin occupies it
                         strip[j] = 2;
-                        GameObject goblin = new GameObject();
-                        goblin.x = j;
-                        goblin.y = i;
-                        goblin.team = 1;
+                        GameObject goblin = new GameObject(j, i, 200, 1, 3);
                         objects.add(goblin);
                         goblinCount++;
                         break;
                     case 'E':
                         // Open space, but an elf occupies it
                         strip[j] = 3;
-                        GameObject elf = new GameObject();
-                        elf.x = j;
-                        elf.y = i;
-                        elf.team = 2;
+                        GameObject elf = new GameObject(j, i, 200, 2, elfDamage);
                         objects.add(elf);
                         elfCount++;
                 }
@@ -314,8 +317,17 @@ public class CaveBattle extends AdventMaster {
         int x = 0;
         int y = 0;
         int health = 200;
+        int damage = 0;
         boolean isAlive = true;
         public int team = 1;
+
+        public GameObject(int x, int y, int health, int team, int damage) {
+            this.x = x;
+            this.y = y;
+            this.health = health;
+            this.team = team;
+            this.damage = damage;
+        }
 
         public void move(int[][] map, int dx, int dy) {
             // Open the current space
@@ -356,10 +368,7 @@ public class CaveBattle extends AdventMaster {
             // Fill the Node array
             for(int y = 0; y < map.length; y++) {
                 for(int x = 0; x < map[y].length; x++) {
-                    Node node = new Node();
-                    node.x = x;
-                    node.y = y;
-                    node.score = Integer.MAX_VALUE;
+                    Node node = new Node(x, y, Integer.MAX_VALUE);
                     node.prev = null;
                     grid[y][x] = node;
                 }
@@ -410,11 +419,12 @@ public class CaveBattle extends AdventMaster {
                         n.prev = current;
                     }
                     if(newScore == n.score) {
+                        Node prevNode = n.prev;
                         PointComparator c = new PointComparator();
-                        Point p2 = new Point(n.x, n.y);
-                        //Point p1 = new Point(current.x, current.y);
-                        Point p1 = new Point(sourceX, sourceY);
-                        if(c.compare(p1, p2) == -1) {
+                        //Point p2 = new Point(n.x, n.y);
+                        Point p2 = new Point(current.x, current.y);
+                        Point p1 = new Point(prevNode.x, prevNode.y);
+                        if(c.compare(p2, p1) == -1) {
                             n.prev = current;
                         }
                     }
@@ -465,6 +475,12 @@ public class CaveBattle extends AdventMaster {
         int y;
         int score;
         Node prev;
+
+        public Node(int x, int y, int score) {
+            this.x = x;
+            this.y = y;
+            this.score = score;
+        }
 
         public int compareTo(Node n) {
             if(score < n.score) {
