@@ -77,6 +77,10 @@ public class Driver {
         //System.out.println("\nDay17");
         new Reservoir("./Sample Input/Day17.txt").run(timer);
 
+        // Day 18
+        //System.out.println("\nDay18");
+        //new GameOfLumber("./Sample Input/Day18.txt").run(timer);
+
         System.out.println();
         timer.printTotalTime(SimpleTimer.Units.SECONDS);
     }

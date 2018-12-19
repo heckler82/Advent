@@ -59,6 +59,8 @@ public class Reservoir extends AdventMaster {
             }
         }
 
+        printMap(map);
+
         System.out.printf("The number of tiles that water can reach is %d%n", wetSpots);
         System.out.printf("The number of tiles that water remains in after draining %d%n", waterSpots);
     }
@@ -199,7 +201,7 @@ public class Reservoir extends AdventMaster {
         }
 
         // Set up the map with default to sand
-        map = new char[(maxY - minY) + 2][(maxX - minX) + 1];
+        map = new char[(maxY - minY) + 2][(maxX - minX) + 2];
         for(char[] strip : map) {
             Arrays.fill(strip, '.');
         }
