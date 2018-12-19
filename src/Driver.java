@@ -81,6 +81,10 @@ public class Driver {
         //System.out.println("\nDay18");
         //new GameOfLumber("./Sample Input/Day18.txt").run(timer);
 
+        // Day 19
+        //System.out.println("\nDay19");
+        new FlowControl("./Sample Input/Day19.txt").run(timer);
+
         System.out.println();
         timer.printTotalTime(SimpleTimer.Units.SECONDS);
     }
