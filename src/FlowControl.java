@@ -61,7 +61,9 @@ public class FlowControl extends AdventMaster {
         System.out.println("Begin Part 1");
         while (reg.instrptr < ops.length) {
             reg.perform(ops[reg.instrptr], args[reg.instrptr]);
+            // If this same instruction has executed before, value has been found and program is now looping
             if(!set.add(reg.instrptr)) {
+                // Perform early exit
                 sum = sumFactors(reg.registers[3]);
                 break;
             }
@@ -73,7 +75,9 @@ public class FlowControl extends AdventMaster {
         System.out.println("Begin Part 2");
         while (reg.instrptr < ops.length) {
             reg.perform(ops[reg.instrptr], args[reg.instrptr]);
+            // If this same instruction has executed before, value has been found and program is now looping
             if(!set.add(reg.instrptr)) {
+                // Perform early exit
                 sum = sumFactors(reg.registers[3]);
                 break;
             }
