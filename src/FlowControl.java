@@ -69,7 +69,7 @@ public class FlowControl extends AdventMaster {
         System.out.printf("The value in register zero is %d%n%n", sum);
         reg.reset(0, 1, ptrSeed);
         set.clear();
-
+        // Part 2
         System.out.println("Begin Part 2");
         while (reg.instrptr < ops.length) {
             reg.perform(ops[reg.instrptr], args[reg.instrptr]);
@@ -81,6 +81,12 @@ public class FlowControl extends AdventMaster {
         System.out.printf("The value in register zero when initialized to 1 is %d%n", sum);
     }
 
+    /**
+     * Gets the sum of all the factors of value
+     *
+     * @param value The value
+     * @return The sum of value's factors
+     */
     private int sumFactors(int value) {
         int sum = 0;
         for(int i = 1; i <= value; i++) {
