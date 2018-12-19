@@ -59,8 +59,6 @@ public class Reservoir extends AdventMaster {
             }
         }
 
-        printMap(map);
-
         System.out.printf("The number of tiles that water can reach is %d%n", wetSpots);
         System.out.printf("The number of tiles that water remains in after draining %d%n", waterSpots);
     }

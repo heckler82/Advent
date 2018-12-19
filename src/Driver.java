@@ -75,7 +75,7 @@ public class Driver {
 
         // Day 17
         //System.out.println("\nDay17");
-        new Reservoir("./Sample Input/Day17.txt").run(timer);
+        //new Reservoir("./Sample Input/Day17.txt").run(timer);
 
         // Day 18
         //System.out.println("\nDay18");
