@@ -44,6 +44,7 @@ public class GameOfLumber extends AdventMaster {
         // Perform 'time' iterations
         int numWoods = 0;
         int numYards = 0;
+        Set<Integer> s = new LinkedHashSet<>();
         for(int t = 0; t < time; t++) {
             // Reset counters
             numWoods = 0;

@@ -12,8 +12,6 @@ import java.util.*;
  */
 public class MasterMap extends AdventMaster {
     static int NODE_ID = 0;
-    Graph g;
-    int test = 0;
 
     /**
      * Creates a new instance
@@ -22,7 +20,6 @@ public class MasterMap extends AdventMaster {
      */
     public MasterMap(String fileName) {
         super(fileName);
-        g = new Graph();
     }
 
     @Override
@@ -33,23 +30,27 @@ public class MasterMap extends AdventMaster {
         // Create initial room
         Node root = new Node(NODE_ID, 0, 0);
         String routes = input[0].substring(1, input[0].length() - 1);
-        routes = stripOptionalRoutes(routes);
-        createGraph(routes, 0, root);
+        Graph g = createGraph(routes, 0, root);
 
-        // Find the paths here
+        // Find paths to all nodes from the specified location here
+        Dijkstra dijkstra = new Dijkstra(g, root);
+
         int longestPath = 0;
-        for(Node n : g.edges.keySet()) {
-            if(n != root) {
-                BFSSearch s = new BFSSearch(g, root);
-                int cost = s.getPathCost(n);
-                if(cost > longestPath) {
-                    longestPath = cost;
-                    System.out.println(cost);
-                }
+        int minGrand = 0;
+        for(Point p : g.vertices.keySet()) {
+            int path = dijkstra.getPathCost(g.vertices.get(p));
+            if(path > longestPath) {
+                longestPath = path;
+            }
+            if(path >= 1000) {
+                minGrand++;
             }
         }
 
+        printGraph(g);
+
         System.out.printf("The longest path is %d doors away%n", longestPath);
+        System.out.printf("The number of paths that are at least 1000 doors away is %d%n", minGrand);
     }
 
     /**
@@ -58,14 +59,16 @@ public class MasterMap extends AdventMaster {
      * @param routes The paths to create the graph
      * @param index The current index
      * @param root The root node
-     * @return The position in the graph
+     * @return The graph
      */
-    private int createGraph(String routes, int index, Node root){
-        Node next = root;
+    private Graph createGraph(String routes, int index, Node root){
+        Graph graph = new Graph(root);
+        Node current = root;
+        Node next;
         char c;
         String cardinal = "NSEW";
+        Stack<Node> saved = new Stack<>();
 
-        // Loop until the end of the input is detected
         while(index < routes.length()) {
             c = routes.charAt(index);
             switch(c) {
@@ -73,32 +76,105 @@ public class MasterMap extends AdventMaster {
                 case 'S':
                 case 'E':
                 case 'W':
-                    next = root.move(cardinal.indexOf(c));
-                    g.addEdge(root, next);
+                    next = current.move(cardinal.indexOf(c));
+                    if(!graph.addVertex(next)) {
+                        next = graph.vertices.get(next.p);
+                        NODE_ID--;
+                    }
+                    graph.addEdge(current, next);
+                    current = next;
                     break;
                 case '(':
-                    index = createGraph(routes, index + 1, root);
-                    while(routes.charAt(index) == '|') {
-                        index = createGraph(routes, index + 1, root);
-                    }
+                    saved.push(current);
                     break;
                 case '|':
+                    current = saved.peek();
+                    break;
                 case ')':
-                    return index;
+                    current = saved.pop();
+                    break;
             }
             index++;
-            root = next;
         }
-        return index;
+        return graph;
+    }
+
+    private void printGraph(Graph graph) {
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int maxY = Integer.MIN_VALUE;
+
+        // Determine the range of the graph
+        int count = 0;
+        for(Point p : graph.vertices.keySet()) {
+            count++;
+            int x = p.x;
+            int y = p.y;
+            // Check x values
+            if(x < minX) {
+                minX = x;
+            } else {
+                if(x > maxX) {
+                    maxX = x;
+                }
+            }
+            // Check y values
+            if(y < minY) {
+                minY = y;
+            } else {
+                if(y > maxY) {
+                    maxY = y;
+                }
+            }
+        }
+        // Add one to account for 0, 0
+        int dx = Math.abs(maxX - minX) + 1;
+        int dy = Math.abs(maxY - minY) + 1;
+        // Display offsets
+        int ox = Math.abs(minX);
+        int oy = Math.abs(minY);
+        // Make the char array and populate with wall characters
+        char[][] print = new char[(2 * dy) + 1][(2 * dx) + 1];
+        for(char[] arr : print) {
+            Arrays.fill(arr, '#');
+        }
+        // Loop through graph vertices again to mark locations properly
+        for(Point p : graph.vertices.keySet()) {
+            // Normalize values to array lengths (minimum values should be set to 0 relative to the array)
+            int x = p.x + ox;
+            int y = p.y + oy;
+            // Change array value
+            int px = (2 * x) + 1;
+            int py = (2 * y) + 1;
+            print[py][px] = '.';
+            // Mark surrounding doors
+            for(Point p2 : graph.edges.get(graph.vertices.get(p).id)) {
+                // Change array value
+                Node n = graph.vertices.get(p2);
+                int nx = n.p.x - p.x;
+                int ny = n.p.y - p.y;
+                print[py + ny][px + nx] = (ny == 0) ? '|' : '-';
+            }
+        }
+        // Mark the origin point
+        int startX = graph.root.p.x + ox;
+        int startY = graph.root.p.y + oy;
+        print[(2 * startY) + 1][(2 * startX) + 1] = 'X';
+        // Print the array
+        for(int y = 0; y < print.length; y++) {
+            for(int x = 0; x < print[y].length; x++) {
+                System.out.print(print[y][x] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
 
     private String stripOptionalRoutes(String input) {
         String newInput = input;
-        String[] patterns = {"NEWS", "NWES", "NWSE", "NESW", "SWEN", "SEWN", "SENW", "SWNE", "ENSW", "ESNW", "ENWS", "ESWN", "WNSE", "WSNE", "WNES", "WSEN"};
 
-        for(String pat : patterns) {
-            newInput = newInput.replace(pat, "");
-        }
+        newInput = newInput.replaceAll("\\([A-Z]{2,}.\\)", "");
 
         return newInput;
     }
@@ -107,40 +183,57 @@ public class MasterMap extends AdventMaster {
      * Helper class
      */
     private class Graph {
-        Map<Node, List<Node>> edges;
+        Map<Integer, List<Point>> edges;
         Map<Point, Node> vertices;
+        Node root;
 
         public Graph() {
             edges = new HashMap<>();
             vertices = new HashMap<>();
         }
 
-        public void addEdge(Node from, Node to) {
-            // Ensure from node is not already existing
-            if(vertices.get(to.p) != null) {
-                NODE_ID--;
-                to = vertices.get(to.p);
-            }
+        public Graph(Node root) {
+            this();
+            this.root = root;
+            addVertex(root);
+        }
 
+        public void addEdge(Node from, Node to) {
             // Add first edge
-            if(edges.containsKey(from)) {
-                edges.get(from).add(to);
+            if(edges.containsKey(from.id)) {
+                List<Point> connected = edges.get(from.id);
+                if(!connected.contains(to.p)) {
+                    connected.add(to.p);
+                }
             } else {
-                vertices.put(from.p, from);
-                ArrayList<Node> connected = new ArrayList<>();
-                connected.add(to);
-                edges.put(from, connected);
+                ArrayList<Point> connected = new ArrayList<>();
+                connected.add(to.p);
+                edges.put(from.id, connected);
             }
 
             // Add second edge
-            if(edges.containsKey(to)) {
-                edges.get(to).add(from);
+            if(edges.containsKey(to.id)) {
+                List<Point> connected = edges.get(to.id);
+                if(!connected.contains(from.p)) {
+                    connected.add(from.p);
+                }
             } else {
-                vertices.put(to.p, to);
-                ArrayList<Node> connected = new ArrayList<>();
-                connected.add(from);
-                edges.put(to, connected);
+                ArrayList<Point> connected = new ArrayList<>();
+                connected.add(from.p);
+                edges.put(to.id, connected);
             }
+        }
+
+        public void setRoot(Node root) {
+            this.root = root;
+        }
+
+        public boolean addVertex(Node n) {
+            if(!vertices.containsKey(n.p)) {
+                vertices.put(n.p, n);
+                return true;
+            }
+            return false;
         }
 
         public int getNumberOfVertices() {
@@ -148,32 +241,40 @@ public class MasterMap extends AdventMaster {
         }
     }
 
-    private class BFSSearch {
-        BFSNode[] nodes;
+    private class Dijkstra {
+        DNode[] nodes;
+        ArrayList<Integer> counts;
 
-        public BFSSearch(Graph graph, Node from) {
-            nodes = new BFSNode[graph.getNumberOfVertices()];
-
-            for(Node n : graph.edges.keySet()) {
-                nodes[n.id] = new BFSNode(n);
+        public Dijkstra(Graph graph, Node from) {
+            // Setup available nodes
+            nodes = new DNode[graph.getNumberOfVertices()];
+            for(Point p : graph.vertices.keySet()) {
+                Node n = graph.vertices.get(p);
+                nodes[n.id] = new DNode(n);
             }
 
-            Queue<BFSNode> q = new PriorityQueue<>();
-            BFSNode current = nodes[from.id];
+            // Get the starting node, update score, and queue up
+            Queue<DNode> q = new PriorityQueue<>();
+            DNode current = nodes[from.id];
             current.score = 0;
             current.visited = true;
             q.offer(current);
 
+            // Continue to poll until all nodes visited
             while(!q.isEmpty()) {
                 current = q.poll();
 
-                for(Node neighbor : graph.edges.get(current.n)) {
-                    BFSNode neighborNode = nodes[neighbor.id];
+                // Process all neighbors of current
+                for(Point p : graph.edges.get(current.n.id)) {
+                    Node n = graph.vertices.get(p);
                     int newScore = current.score + 1;
-                    if(!neighborNode.visited) {
-                        neighborNode.score = newScore;
-                        neighborNode.visited = true;
-                        q.offer(neighborNode);
+                    DNode dn = nodes[n.id];
+                    // If the new score is less than the old score, then update and place into the queue
+                    if(newScore < dn.score) {
+                        dn.score = newScore;
+                        dn.prev = current;
+                        dn.visited = true;
+                        q.offer(dn);
                     }
                 }
             }
@@ -184,30 +285,23 @@ public class MasterMap extends AdventMaster {
         }
     }
 
-    private class BFSNode implements Comparable<BFSNode> {
+    private class DNode implements Comparable<DNode> {
         int score;
+        DNode prev;
         boolean visited;
-        BFSNode prev;
         Node n;
 
-        public BFSNode(Node n) {
-            this(n, Integer.MIN_VALUE);
+        public DNode(Node n) {
+            this(n, Integer.MAX_VALUE);
         }
 
-        public BFSNode(Node n, int score) {
+        public DNode(Node n, int score) {
             this.score = score;
-            visited = false;
             this.n = n;
         }
 
-        public int compareTo(BFSNode bfs) {
-            if(score < bfs.score) {
-                return -1;
-            }
-            if(score == bfs.score) {
-                return 0;
-            }
-            return 1;
+        public int compareTo(DNode dn) {
+            return Integer.compare(dn.score, score);
         }
     }
 
@@ -225,7 +319,7 @@ public class MasterMap extends AdventMaster {
             int dx = 0;
             int dy = 0;
             if(direction < 2) {
-                dy = direction == 0 ? 1 : -1;
+                dy = direction == 0 ? -1 : 1;
             } else {
                 dx = direction == 2 ? 1 : -1;
             }
