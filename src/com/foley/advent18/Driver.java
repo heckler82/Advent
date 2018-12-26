@@ -23,6 +23,7 @@ import com.foley.advent18.day20.MasterMap;
 import com.foley.advent18.day22.CaveDepth;
 import com.foley.advent18.day23.ExperimentalTeleportation;
 import com.foley.advent18.day24.ImmuneSystemSim;
+import com.foley.advent18.day25.Constellations;
 
 /**
  * Main entry-point for program
@@ -129,7 +130,11 @@ public class Driver {
 
         // Day 24
         //System.out.println("\nDay24");
-        new ImmuneSystemSim("/com/foley/advent18/day24/Day24.txt").run(timer);
+        //new ImmuneSystemSim("/com/foley/advent18/day24/Day24.txt").run(timer);
+
+        // Day 25
+        //System.out.println("\nDay25");
+        new Constellations("/com/foley/advent18/day25/Day25.txt").run(timer);
 
         System.out.println();
         timer.printTotalTime(SimpleTimer.Units.SECONDS);

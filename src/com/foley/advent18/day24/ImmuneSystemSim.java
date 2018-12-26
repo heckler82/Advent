@@ -2,10 +2,7 @@ package com.foley.advent18.day24;
 
 import com.foley.advent18.AdventMaster;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +13,9 @@ import java.util.regex.Pattern;
  * @version 24 Dec 2018
  */
 public class ImmuneSystemSim extends AdventMaster {
+    int infectCount = 0;
+    int immuneCount = 0;
+
     /**
      * Creates a new instance
      *
@@ -30,12 +30,152 @@ public class ImmuneSystemSim extends AdventMaster {
      * Accomplishes the task for the day
      */
     protected void task() {
-        Group[] groups = parseInput(input);
-        int test = 0;
+        for(int boost = 0; boost > Integer.MIN_VALUE; boost++) {
+            System.out.printf("Boost: %d%n", boost);
+            Group[][] groups = parseInput(input);
+            for (Group grp : groups[2]) {
+                if (grp.isAlive) {
+                    grp.attackDamage += boost;
+                }
+            }
+            while (infectCount > 0 && immuneCount > 0) {
+                // Print out current status
+                /**System.out.println("Immune System:");
+                for (Group grp : groups[2]) {
+                    if (grp.isAlive) {
+                        System.out.printf("Group %d contains %d units%n", grp.id, grp.numUnits);
+                    }
+                }
+                System.out.println("Infection:");
+                for (Group grp : groups[1]) {
+                    if (grp.isAlive) {
+                        System.out.printf("Group %d contains %d units%n", grp.id, grp.numUnits);
+                    }
+                }
+                System.out.println();*/
+                // Sort by effective power
+                Arrays.sort(groups[0]);
+                // Target selection
+                Group[] main = groups[0];
+                int numTargeted = 0;
+                for (Group grp : main) {
+                    // Only process if alive
+                    if (grp.isAlive) {
+                        Group[] enemy;
+                        // Select the appropriate list
+                        if (grp.isInfection) {
+                            enemy = groups[2];
+                        } else {
+                            enemy = groups[1];
+                        }
+                        Group target = null;
+                        int highestDamage = 0;
+                        for (Group potential : enemy) {
+                            if (potential.isAlive && !potential.isTargeted) {
+                                // If immune to attack type, ignore all damage
+                                int totalAttackDamage = grp.getEffectivePower();
+                                if ((grp.attackType & potential.immunities) > 0) {
+                                    continue;
+                                } else {
+                                    // Damage is double for weakness
+                                    if ((grp.attackType & potential.weaknesses) > 0) {
+                                        totalAttackDamage *= 2;
+                                    }
+                                }
+                                // Match target if found
+                                if (totalAttackDamage > highestDamage) {
+                                    highestDamage = totalAttackDamage;
+                                    target = potential;
+                                } else {
+                                    if (totalAttackDamage == highestDamage) {
+                                        // Break tie utilizing effectivePower
+                                        if (potential.getEffectivePower() > target.getEffectivePower()) {
+                                            target = potential;
+                                        } else {
+                                            // If still tied, break with initiative
+                                            if (potential.getEffectivePower() == target.getEffectivePower() && potential.initiative > target.initiative) {
+                                                target = potential;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        // Target is either found or not
+                        if (target != null) {
+                            // Mark as claimed
+                            target.isTargeted = true;
+                            grp.target = target;
+                            numTargeted++;
+                        }
+                    }
+                }
+                // Target selection phase over, begin combat
+                // Sort by initiative
+                Arrays.sort(main, new InitiativeComparator());
+                int noHits = 0;
+                int attempted = 0;
+                for (Group grp : main) {
+                    // Only process if alive
+                    if (grp.isAlive) {
+                        // If group found a target, attack it
+                        if (grp.target != null) {
+                            attempted++;
+                            int prior = grp.target.numUnits;
+                            if (!grp.target.takeDamage(grp.getEffectivePower(), grp.attackType)) {
+                                if (grp.target.isInfection) {
+                                    infectCount--;
+                                } else {
+                                    immuneCount--;
+                                }
+                            }
+                            prior = grp.target.numUnits - prior;
+                            if(prior == 0) {
+                                noHits++;
+                            }
+                            grp.target.isTargeted = false;
+                            grp.target = null;
+                        }
+                    } else {
+                        // Unlock target if this group was killed before it could attack
+                        if (grp.target != null) {
+                            grp.target.isTargeted = false;
+                            grp.target = null;
+                        }
+                    }
+                }
+                if(noHits == attempted) {
+                    System.out.println("================================================== Stalemate ==================================================");
+                    break;
+                }
+            }
+            Group[] remaining;
+            String winning;
+            if (infectCount > 0) {
+                remaining = groups[1];
+                winning = "Infection";
+            } else {
+                remaining = groups[2];
+                winning = "Immune System";
+            }
+            int total = 0;
+            for (Group grp : remaining) {
+                if (grp.isAlive) {
+                    total += grp.numUnits;
+                }
+            }
+            System.out.printf("The %s wins the fight. They have %d units left%n%n", winning, total);
+            if("Immune System".equals(winning)) {
+                break;
+            }
+        }
     }
 
-    private Group[] parseInput(String[] input) {
-        ArrayList<Group> groups = new ArrayList<>();
+    private Group[][] parseInput(String[] input) {
+        ArrayList<ArrayList<Group>> groups = new ArrayList<>();
+        groups.add(new ArrayList<Group>());
+        groups.add(new ArrayList<Group>());
+        groups.add(new ArrayList<Group>());
         Map<String, Integer> attackTypes = new HashMap<>();
         attackTypes.put("cold", 1);
         attackTypes.put("fire", 2);
@@ -56,6 +196,7 @@ public class ImmuneSystemSim extends AdventMaster {
                 i++;
                 // Change team
                 isInfection = !isInfection;
+                continue;
             }
             // Split by weaknesses/immunities
             String[] part = str.split("\\)");
@@ -74,8 +215,14 @@ public class ImmuneSystemSim extends AdventMaster {
                 String[] attackString = mainPart.split(" damage ");
                 String key = attackString[0].substring(attackString[0].lastIndexOf(' ') + 1);
                 int attackType = attackTypes.get(key);
-                Group grp = new Group(dat[0], dat[1], attackType, dat[2], dat[3], isInfection);
-                groups.add(grp);
+                int id = isInfection ? groups.get(1).size() + 1 : groups.get(2).size() + 1;
+                Group grp = new Group(id, dat[0], dat[1], attackType, dat[2], dat[3], isInfection);
+                groups.get(0).add(grp);
+                if(grp.isInfection) {
+                    groups.get(1).add(grp);
+                } else {
+                    groups.get(2).add(grp);
+                }
             } else {
                 String backPart = part[1];
                 // Pull out weaknesses/immunities
@@ -98,7 +245,8 @@ public class ImmuneSystemSim extends AdventMaster {
                     dat[index] = Integer.parseInt(digitMatcher.group());
                     index++;
                 }
-                Group grp = new Group(dat[0], dat[1], attackType, dat[2], dat[3], isInfection);
+                int id = isInfection ? groups.get(1).size() + 1 : groups.get(2).size() + 1;
+                Group grp = new Group(id, dat[0], dat[1], attackType, dat[2], dat[3], isInfection);
                 // Determine if there are multiple parts inside the parentheses
                 String[] part3 = part2[1].split("; ++");
                 // Work each token that was parsed (either 1 or 2)
@@ -121,17 +269,28 @@ public class ImmuneSystemSim extends AdventMaster {
                         grp.weaknesses = type;
                     }
                 }
-                groups.add(grp);
+                groups.get(0).add(grp);
+                if(grp.isInfection) {
+                    groups.get(1).add(grp);
+                } else {
+                    groups.get(2).add(grp);
+                }
             }
-
         }
-        return groups.toArray(new Group[groups.size()]);
+        Group[][] newGroups = new Group[groups.size()][];
+        for(int i = 0; i < newGroups.length; i++) {
+            newGroups[i] = groups.get(i).toArray(new Group[groups.get(i).size()]);
+        }
+        infectCount = newGroups[1].length;
+        immuneCount = newGroups[2].length;
+        return newGroups;
     }
 
     /**
      * Helper class
      */
     private class Group implements Comparable<Group> {
+        int id;
         int numUnits = 0;
         int hitPoints = 0;
         int attackDamage = 0;
@@ -140,14 +299,21 @@ public class ImmuneSystemSim extends AdventMaster {
         int weaknesses = 0;
         int immunities = 0;
         boolean isInfection;
+        boolean isAlive;
+        boolean isTargeted;
+        Group target;
 
-        public Group(int numUnits, int hitPoints, int attackType, int attackDamage, int initiative, boolean isInfection) {
+        public Group(int id, int numUnits, int hitPoints, int attackType, int attackDamage, int initiative, boolean isInfection) {
+            this.id = id;
             this.numUnits = numUnits;
             this.hitPoints = hitPoints;
             this.attackType = attackType;
             this.attackDamage = attackDamage;
             this.initiative = initiative;
             this.isInfection = isInfection;
+            this.isAlive = true;
+            this.isTargeted = false;
+            this.target = null;
         }
 
         public int getEffectivePower() {
@@ -170,11 +336,23 @@ public class ImmuneSystemSim extends AdventMaster {
                 numUnits--;
                 effectiveDamage -= hitPoints;
             }
-            return numUnits > 0;
+            isAlive = numUnits > 0;
+            isTargeted = false;
+            return isAlive;
         }
 
         public int compareTo(Group grp) {
-            return Integer.compare(initiative, grp.initiative);
+            int comp = Integer.compare(grp.getEffectivePower(), getEffectivePower());
+            if(comp == 0) {
+                return Integer.compare(grp.initiative, initiative);
+            }
+            return comp;
+        }
+    }
+
+    private class InitiativeComparator implements Comparator<Group> {
+        public int compare(Group u, Group v) {
+            return Integer.compare(v.initiative, u.initiative);
         }
     }
 }
