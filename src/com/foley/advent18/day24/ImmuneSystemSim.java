@@ -2,7 +2,12 @@ package com.foley.advent18.day24;
 
 import com.foley.advent18.AdventMaster;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Class description goes here
@@ -25,10 +30,19 @@ public class ImmuneSystemSim extends AdventMaster {
      * Accomplishes the task for the day
      */
     protected void task() {
+        Group[] groups = parseInput(input);
+        int test = 0;
     }
 
-    private void parseInput(String[] input) {
-        int lastIndex = 0;
+    private Group[] parseInput(String[] input) {
+        ArrayList<Group> groups = new ArrayList<>();
+        Map<String, Integer> attackTypes = new HashMap<>();
+        attackTypes.put("cold", 1);
+        attackTypes.put("fire", 2);
+        attackTypes.put("slashing", 4);
+        attackTypes.put("radiation", 8);
+        attackTypes.put("bludgeoning", 16);
+
         boolean isInfection = true;
         String first = input[0];
         if("Immune System:".equals(first)) {
@@ -39,16 +53,79 @@ public class ImmuneSystemSim extends AdventMaster {
             String str = input[i];
             if("".equals(str)) {
                 // This will skip the title for the next list in the input
-                lastIndex = i + 2;
-                break;
+                i++;
+                // Change team
+                isInfection = !isInfection;
             }
+            // Split by weaknesses/immunities
+            String[] part = str.split("\\)");
+            // No weaknesses or immunities
+            if(part.length < 2) {
+                String mainPart = part[0];
+                // Pull out main values here
+                Pattern digitPattern = Pattern.compile("\\d+");
+                Matcher digitMatcher = digitPattern.matcher(mainPart);
+                int[] dat = new int[4];
+                int index = 0;
+                while(digitMatcher.find()) {
+                    dat[index] = Integer.parseInt(digitMatcher.group());
+                    index++;
+                }
+                String[] attackString = mainPart.split(" damage ");
+                String key = attackString[0].substring(attackString[0].lastIndexOf(' ') + 1);
+                int attackType = attackTypes.get(key);
+                Group grp = new Group(dat[0], dat[1], attackType, dat[2], dat[3], isInfection);
+                groups.add(grp);
+            } else {
+                String backPart = part[1];
+                // Pull out weaknesses/immunities
+                String[] part2 = part[0].split("\\(");
+                String frontPart = part2[0];
+                // Pull out main values here
+                Pattern digitPattern = Pattern.compile("\\d+");
+                Matcher digitMatcher = digitPattern.matcher(frontPart);
+                int[] dat = new int[4];
+                int index = 0;
+                while(digitMatcher.find()) {
+                    dat[index] = Integer.parseInt(digitMatcher.group());
+                    index++;
+                }
+                String[] attackString = backPart.split(" damage ");
+                String key = attackString[0].substring(attackString[0].lastIndexOf(' ') + 1);
+                int attackType = attackTypes.get(key);
+                digitMatcher = digitPattern.matcher(backPart);
+                while(digitMatcher.find()) {
+                    dat[index] = Integer.parseInt(digitMatcher.group());
+                    index++;
+                }
+                Group grp = new Group(dat[0], dat[1], attackType, dat[2], dat[3], isInfection);
+                // Determine if there are multiple parts inside the parentheses
+                String[] part3 = part2[1].split("; ++");
+                // Work each token that was parsed (either 1 or 2)
+                for(String tkn : part3) {
+                    String[] types = tkn.split(", ++");
+                    boolean isImmune = types[0].startsWith("immune");
+                    int begin = isImmune ? 10 : 8;
+                    // Pull value out from map
+                    key = types[0].substring(begin);
+                    int type = attackTypes.get(key);
+                    // If necessary, parse more values here
+                    for(int j = 1; j < types.length; j++) {
+                        key = types[j];
+                        type = type | attackTypes.get(key);
+                    }
+                    // Push the weaknesses/immunities to the group
+                    if(isImmune) {
+                        grp.immunities = type;
+                    } else {
+                        grp.weaknesses = type;
+                    }
+                }
+                groups.add(grp);
+            }
+
         }
-        // Change team
-        isInfection = !isInfection;
-        // Continue parsing with other list hooked in
-        for(int i = lastIndex; i < input.length; i++) {
-            String str = input[i];
-        }
+        return groups.toArray(new Group[groups.size()]);
     }
 
     /**
@@ -64,10 +141,11 @@ public class ImmuneSystemSim extends AdventMaster {
         int immunities = 0;
         boolean isInfection;
 
-        public Group(int numUnits, int hitPoints, int attackType, int initiative, boolean isInfection) {
+        public Group(int numUnits, int hitPoints, int attackType, int attackDamage, int initiative, boolean isInfection) {
             this.numUnits = numUnits;
             this.hitPoints = hitPoints;
             this.attackType = attackType;
+            this.attackDamage = attackDamage;
             this.initiative = initiative;
             this.isInfection = isInfection;
         }
